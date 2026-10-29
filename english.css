@@ -827,6 +827,17 @@
   gap: 14px;
 }
 
+.exam-online-hint {
+  margin: -2px 0 0;
+  padding: 10px 14px;
+  color: #60768f;
+  font-size: 10px;
+  line-height: 1.6;
+  background: #eef5ff;
+  border: 1px solid #d7e4f3;
+  border-radius: 12px;
+}
+
 .exam-card {
   position: relative;
   display: grid;
@@ -840,6 +851,17 @@
   border: 2px solid #dce7f3;
   border-radius: 22px;
   box-shadow: 0 6px 0 rgba(69, 105, 151, 0.07);
+  cursor: pointer;
+}
+
+.exam-card:hover {
+  border-color: #b9cee4;
+  transform: translateY(-2px);
+}
+
+.exam-card:focus-visible {
+  outline: 3px solid rgba(216, 119, 154, 0.48);
+  outline-offset: 3px;
 }
 
 .exam-card::after {
@@ -969,6 +991,18 @@
   text-decoration: none;
   background: var(--english-blue-soft);
   border-radius: 12px;
+}
+
+.exam-archive-card .exam-archive-unavailable {
+  flex: none;
+  padding: 8px 11px;
+  color: #9a8791;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0;
+  background: #f5eef1;
+  border: 1px solid #ead9e1;
+  border-radius: 9px;
 }
 
 .english-empty {

@@ -79,6 +79,15 @@
     return `file:///${encoded}${page ? `#page=${page}` : ""}`;
   }
 
+  function isLocalFileSource(path) {
+    return /^[A-Za-z]:[\\/]/.test(String(path || "")) ||
+      String(path || "").startsWith("file:");
+  }
+
+  function isPublicWebPage() {
+    return /^https?:$/.test(window.location.protocol);
+  }
+
   function levelLabel(id) {
     return fullLevelMap.get(id) || "词汇";
   }
@@ -682,9 +691,10 @@
           <button class="${ui.examRange === "recent" ? "is-active" : ""}" type="button" data-exam-range="recent">2010 — 2026</button>
           <button class="${ui.examRange === "archive" ? "is-active" : ""}" type="button" data-exam-range="archive">1980 — 2009</button>
         </div>
-        <p><span id="exam-visible-count"></span> 份资料 · 试卷与解析分开保存</p>
+        <p><span id="exam-visible-count"></span> 份资料 · 点击整张试卷卡在线阅读</p>
       </section>
 
+      <p class="exam-online-hint">真题正文已收录在站内，点击任意年份卡即可在线阅读；本机原卷 PDF 不会在其他设备上显示。</p>
       <section class="exam-card-grid" id="exam-card-grid"></section>
     `;
     root.dataset.ready = "true";
@@ -693,8 +703,9 @@
 
   function examCard(item) {
     const read = (savedState.readExams || []).includes(item.year);
+    const showLocalLinks = !isPublicWebPage() || !isLocalFileSource(item.source);
     return `
-      <article class="exam-card ${read ? "is-read" : ""}">
+      <article class="exam-card ${read ? "is-read" : ""}" data-exam-card-open="${item.year}" tabindex="0" role="button" aria-label="在线阅读 ${item.year} 年英语二真题">
         <div class="exam-card-top">
           <span>${read ? "已打开" : "NATIONAL EXAM"}</span>
           <b>204</b>
@@ -705,14 +716,14 @@
           ${item.sections.map((section) => `<span>${section}</span>`).join("")}
         </div>
         <div class="exam-card-actions">
-          <button class="english-primary" type="button" data-exam-open="${item.year}">站内阅读</button>
+          <button class="english-primary" type="button" data-exam-open="${item.year}">在线阅读</button>
           ${
-            item.source
+            item.source && showLocalLinks
               ? `<a class="english-link-button" href="${fileUrl(item.source)}" target="_blank" rel="noopener">原卷 PDF</a>`
               : ""
           }
           ${
-            item.analysis
+            item.analysis && showLocalLinks
               ? `<a class="english-link-button" href="${fileUrl(item.analysis)}" target="_blank" rel="noopener">解析</a>`
               : ""
           }
@@ -722,13 +733,18 @@
   }
 
   function archiveCard(item) {
+    const available = !isPublicWebPage() || !isLocalFileSource(item.source);
     return `
-      <article class="exam-archive-card">
+      <article class="exam-archive-card ${available ? "" : "is-unavailable"}">
         <div>
           <span>ARCHIVE PAPER</span>
           <h2>${escapeHtml(item.label)}</h2>
         </div>
-        <a href="${fileUrl(item.source)}" target="_blank" rel="noopener">打开原卷 ↗</a>
+        ${
+          available
+            ? `<a href="${fileUrl(item.source)}" target="_blank" rel="noopener">打开原卷 ↗</a>`
+            : `<span class="exam-archive-unavailable">原件仅保存在本机</span>`
+        }
       </article>
     `;
   }
@@ -810,12 +826,13 @@
 
     const sourceLink = document.getElementById("english-paper-source");
     const analysisLink = document.getElementById("english-paper-analysis");
+    const showLocalLinks = !isPublicWebPage();
     if (sourceLink) {
-      sourceLink.hidden = !paper.source;
+      sourceLink.hidden = !paper.source || !showLocalLinks;
       if (paper.source) sourceLink.href = fileUrl(paper.source);
     }
     if (analysisLink) {
-      analysisLink.hidden = !paper.analysis;
+      analysisLink.hidden = !paper.analysis || !showLocalLinks;
       if (paper.analysis) analysisLink.href = fileUrl(paper.analysis);
     }
 
@@ -985,7 +1002,28 @@
         (item) => String(item.year) === openExam.dataset.examOpen
       );
       if (paper) renderPaper(paper);
+      else showToast("这套试卷暂时没有站内正文。");
+      return;
     }
+
+    const examCardButton = event.target.closest("[data-exam-card-open]");
+    if (examCardButton && !event.target.closest("a, button")) {
+      const paper = data.meta.exams.find(
+        (item) => String(item.year) === examCardButton.dataset.examCardOpen
+      );
+      if (paper) renderPaper(paper);
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    const examCardButton = event.target.closest("[data-exam-card-open]");
+    if (!examCardButton) return;
+    event.preventDefault();
+    const paper = data.meta.exams.find(
+      (item) => String(item.year) === examCardButton.dataset.examCardOpen
+    );
+    if (paper) renderPaper(paper);
   });
 
   document.addEventListener("input", (event) => {
