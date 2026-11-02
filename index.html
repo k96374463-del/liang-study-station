@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f8f8f0">
-  <title>梁思羽的学习站｜考研美术史与英语</title>
+  <title>梁思羽的学习站｜考研学习工作台</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="animal-island.css">
   <link rel="stylesheet" href="english.css">
   <link rel="stylesheet" href="settings.css">
+  <link rel="stylesheet" href="politics.css">
 </head>
 <body>
   <a class="skip-link" href="#main-content">跳到主要内容</a>
@@ -64,6 +65,11 @@
             <strong>考研英语</strong>
             <b>6</b>
           </button>
+          <button class="sidebar-subitem" type="button" data-view="politics" data-nav-target="workbench">
+            <span>05</span>
+            <strong>政治考点</strong>
+            <b>2</b>
+          </button>
         </div>
       </section>
       <section class="sidebar-directory" id="sidebar-directory-materials">
@@ -89,12 +95,17 @@
             <span>03</span>
             <strong>英语专区</strong>
           </button>
-          <button class="sidebar-subitem" type="button" data-view="theory">
+          <button class="sidebar-subitem" type="button" data-view="politics" data-nav-target="materials" data-politics-jump="notes">
             <span>04</span>
+            <strong>政治考点资料</strong>
+            <b>28</b>
+          </button>
+          <button class="sidebar-subitem" type="button" data-view="theory">
+            <span>05</span>
             <strong>美术概论</strong>
           </button>
           <button class="sidebar-subitem" type="button" data-view="knowledge-base">
-            <span>05</span>
+            <span>06</span>
             <strong>我的知识库</strong>
             <b id="sidebar-knowledge-count">0</b>
           </button>
@@ -123,6 +134,11 @@
             <span>03</span>
             <strong>英语词汇复习</strong>
             <b id="sidebar-english-review-count">0</b>
+          </button>
+          <button class="sidebar-subitem" type="button" data-view="politics" data-nav-target="cards" data-politics-jump="review">
+            <span>04</span>
+            <strong>政治考点复习</strong>
+            <b id="sidebar-politics-review-count">0</b>
           </button>
         </div>
       </section>
@@ -375,6 +391,10 @@
       <span>04</span>
       <strong>考研英语</strong>
     </button>
+    <button type="button" data-view="politics" data-nav-target="workbench">
+      <span>05</span>
+      <strong>政治考点</strong>
+    </button>
   </div>
   <div class="mobile-directory" id="mobile-directory-materials">
     <button class="is-current" type="button" data-view="map">
@@ -389,12 +409,16 @@
       <span>03</span>
       <strong>英语专区</strong>
     </button>
-    <button type="button" data-view="theory">
+    <button type="button" data-view="politics" data-nav-target="materials" data-politics-jump="notes">
       <span>04</span>
+      <strong>政治考点资料</strong>
+    </button>
+    <button type="button" data-view="theory">
+      <span>05</span>
       <strong>美术概论</strong>
     </button>
     <button type="button" data-view="knowledge-base">
-      <span>05</span>
+      <span>06</span>
       <strong>我的知识库</strong>
     </button>
   </div>
@@ -410,6 +434,10 @@
     <button type="button" data-view="review-english">
       <span>03</span>
       <strong>英语词汇复习</strong>
+    </button>
+    <button type="button" data-view="politics" data-nav-target="cards" data-politics-jump="review">
+      <span>04</span>
+      <strong>政治考点复习</strong>
     </button>
   </div>
   <div class="mobile-directory" id="mobile-directory-works">
@@ -836,6 +864,10 @@
           <b>查看路线</b>
         </button>
       </div>
+    </section>
+
+    <section class="view" id="view-politics" data-view-panel="politics" aria-labelledby="politics-title" hidden>
+      <div class="politics-page" id="politics-content"></div>
     </section>
 
     <section class="view" id="view-map" data-view-panel="map" aria-labelledby="map-title" hidden>
@@ -1498,6 +1530,7 @@
             <span><b id="settings-art-answered">0</b> 道答题记录</span>
             <span><b id="settings-english-mastered">0</b> 个英语词</span>
             <span><b id="settings-english-exams">0 / 0</b> 套真题</span>
+            <span><b id="settings-politics-mastered">0</b> 个政治考点</span>
           </div>
           <div class="settings-backup-main-action">
             <button class="settings-backup-primary" id="settings-export-backup" type="button">
@@ -1578,6 +1611,13 @@
               <small>词汇掌握状态与已打开真题</small>
             </span>
             <button class="settings-danger-button" id="settings-reset-english" type="button">清除英语记录</button>
+          </div>
+          <div>
+            <span>
+              <strong>政治考点记录</strong>
+              <small>两大必考点卡片掌握状态</small>
+            </span>
+            <button class="settings-danger-button" id="settings-reset-politics" type="button">清除政治记录</button>
           </div>
         </div>
       </section>
@@ -1862,7 +1902,9 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="foreign-data.js"></script>
   <script src="english-data.js"></script>
+  <script src="politics-data.js"></script>
   <script src="app.js"></script>
   <script src="english.js"></script>
+  <script src="politics.js"></script>
 </body>
 </html>

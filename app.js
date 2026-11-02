@@ -1633,6 +1633,7 @@ const questions = [
 
 const STORAGE_KEY = "guangwu-art-history-v1";
 const ENGLISH_STORAGE_KEY = "liangEnglishStudyV2";
+const POLITICS_STORAGE_KEY = "liangPoliticsStudyV1";
 const defaultState = {
   knownCards: [],
   answered: 0,
@@ -1743,6 +1744,9 @@ function createBackupPayload() {
     english: readStoredJson(ENGLISH_STORAGE_KEY, {
       mastered: [],
       readExams: []
+    }),
+    politics: readStoredJson(POLITICS_STORAGE_KEY, {
+      known: []
     })
   };
 }
@@ -1895,6 +1899,10 @@ function importBackupFile(file) {
         payload?.english ||
         payload?.data?.english ||
         payload?.data?.[ENGLISH_STORAGE_KEY];
+      const politicsData =
+        payload?.politics ||
+        payload?.data?.politics ||
+        payload?.data?.[POLITICS_STORAGE_KEY];
       if (
         !appData ||
         typeof appData !== "object" ||
@@ -1909,6 +1917,9 @@ function importBackupFile(file) {
       if (!confirmed) return;
       localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
       localStorage.setItem(ENGLISH_STORAGE_KEY, JSON.stringify(englishData));
+      if (politicsData && typeof politicsData === "object") {
+        localStorage.setItem(POLITICS_STORAGE_KEY, JSON.stringify(politicsData));
+      }
       showToast("备份恢复成功，正在重新载入。");
       window.setTimeout(() => window.location.reload(), 350);
     } catch {
@@ -1931,6 +1942,19 @@ function clearEnglishProgress() {
     JSON.stringify({ mastered: [], readExams: [] })
   );
   showToast("英语学习记录已清除，正在重新载入。");
+  window.setTimeout(() => window.location.reload(), 350);
+}
+
+function clearPoliticsProgress() {
+  const confirmed = window.confirm(
+    "确定清除政治考点卡片的掌握记录吗？此操作无法撤销，建议先下载备份。"
+  );
+  if (!confirmed) return;
+  localStorage.setItem(
+    POLITICS_STORAGE_KEY,
+    JSON.stringify({ known: [], checked: [] })
+  );
+  showToast("政治考点学习记录已清除，正在重新载入。");
   window.setTimeout(() => window.location.reload(), 350);
 }
 
@@ -3024,6 +3048,7 @@ function showView(name, options = {}) {
     home: "模块总览",
     today: "今日计划",
     "english-home": "考研英语",
+    politics: "政治考点",
     map: "学习资料",
     works: "历史作品展",
     library: "历史作品展",
@@ -3052,8 +3077,9 @@ function showView(name, options = {}) {
   if (backToHub) backToHub.hidden = name === "home";
   document.body.classList.toggle("workspace-open", name !== "home");
 
-  const navSection =
-    ["home", "today", "foreign", "english-home"].includes(name)
+  const navSection = options.navTarget ||
+    (
+    ["home", "today", "foreign", "english-home", "politics"].includes(name)
       ? "workbench"
       : ["map", "foreign-map", "english-materials", "theory", "knowledge-base"].includes(name)
         ? "materials"
@@ -3069,14 +3095,20 @@ function showView(name, options = {}) {
                   ? "profile"
                   : name === "settings"
                     ? "settings"
-                  : "";
+                  : ""
+    );
   document.querySelectorAll("[data-nav-section]").forEach((button) => {
     const isActive = button.dataset.navSection === navSection;
     button.classList.toggle("is-current", isActive);
     button.classList.toggle("is-active", isActive);
   });
   document.querySelectorAll(".sidebar-subitem, .mobile-directory button").forEach((button) => {
-    button.classList.toggle("is-current", button.dataset.view === name);
+    const matchesTarget =
+      !button.dataset.navTarget || button.dataset.navTarget === navSection;
+    button.classList.toggle(
+      "is-current",
+      button.dataset.view === name && matchesTarget
+    );
   });
   if (["workbench", "materials", "cards", "works", "exams", "english"].includes(navSection)) {
     showDirectory(navSection);
@@ -3088,6 +3120,7 @@ function showView(name, options = {}) {
   saveState();
   updateProgressUI();
   window.EnglishStudy?.show(name);
+  window.PoliticsStudy?.show(name);
 
   if (name === "review" && ["compare", "wrong"].includes(options.mode)) {
     setReviewSubject("cn");
@@ -3268,6 +3301,7 @@ function updateSidebarContext() {
     "foreign-practice": "历史真题小仓库 · 外国美术史",
     profile: "学习档案",
     settings: "设置与备份",
+    politics: "考研政治 · 两大必考点",
     "vocab-flash": "英语二 · 词汇闪过",
     "english-exams": "英语二 · 历年真题"
   };
@@ -4132,6 +4166,14 @@ function renderProfile() {
     wordPercent: 0,
     examPercent: 0
   };
+  const politicsSaved = readStoredJson(POLITICS_STORAGE_KEY, { known: [] });
+  const politicsKnown = new Set(
+    Array.isArray(politicsSaved.known) ? politicsSaved.known : []
+  ).size;
+  const politicsTotal = window.POLITICS_STUDY_DATA?.cards?.length || 28;
+  const politicsPercent = politicsTotal
+    ? Math.round((politicsKnown / politicsTotal) * 100)
+    : 0;
   const chapterRows = chapters
     .map((chapter) => {
       const progress = getChapterProgress(chapter.id);
@@ -4209,6 +4251,29 @@ function renderProfile() {
           <button class="button button-outline" type="button" data-view="vocab-flash">继续背词</button>
           <button class="button button-outline" type="button" data-view="review-english">词汇复习</button>
           <button class="button button-outline" type="button" data-view="english-exams">英语真题</button>
+        </div>
+      </div>
+    </section>
+    <section class="profile-panel profile-politics-panel">
+      <div class="profile-panel-head">
+        <h2>政治考点档案</h2>
+        <span>两大必考点 · 肖四资料</span>
+      </div>
+      <div class="profile-politics-grid">
+        <div class="profile-politics-stat">
+          <span>已掌握必考点</span>
+          <strong>${politicsKnown}</strong>
+          <small>共 ${politicsTotal} 张考点卡 · ${politicsPercent}%</small>
+          <i><b style="width:${politicsPercent}%"></b></i>
+        </div>
+        <div class="profile-politics-stat">
+          <span>专题覆盖</span>
+          <strong>2</strong>
+          <small>“十五五” · 抗战胜利80周年</small>
+        </div>
+        <div class="profile-politics-links">
+          <button class="button button-outline" type="button" data-view="politics" data-politics-jump="review">继续复习</button>
+          <button class="button button-outline" type="button" data-view="politics" data-politics-jump="notes">肖四笔记</button>
         </div>
       </div>
     </section>
@@ -4692,6 +4757,12 @@ function bindEvents() {
       return;
     }
 
+    const resetPolitics = event.target.closest("#settings-reset-politics");
+    if (resetPolitics) {
+      clearPoliticsProgress();
+      return;
+    }
+
     if (!event.target.closest(".study-status")) closeStudyStatusMenu();
 
     const foreignReviewMode = event.target.closest("[data-foreign-review-mode]");
@@ -4898,7 +4969,9 @@ function bindEvents() {
 
     const viewButton = event.target.closest("[data-view]");
     if (viewButton) {
-      showView(viewButton.dataset.view);
+      showView(viewButton.dataset.view, {
+        navTarget: viewButton.dataset.navTarget || undefined
+      });
       if (viewButton.hasAttribute("data-foreign-reset")) exitForeignQuiz();
       return;
     }
