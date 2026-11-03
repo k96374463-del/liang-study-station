@@ -3049,6 +3049,9 @@ function showView(name, options = {}) {
     today: "今日计划",
     "english-home": "考研英语",
     politics: "政治考点",
+    "politics-materials": "学习资料 · 政治",
+    "politics-review": "复习小卡片 · 政治",
+    "politics-practice": "政治自测",
     map: "学习资料",
     works: "历史作品展",
     library: "历史作品展",
@@ -3081,9 +3084,9 @@ function showView(name, options = {}) {
     (
     ["home", "today", "foreign", "english-home", "politics"].includes(name)
       ? "workbench"
-      : ["map", "foreign-map", "english-materials", "theory", "knowledge-base"].includes(name)
+      : ["map", "foreign-map", "english-materials", "politics-materials", "theory", "knowledge-base"].includes(name)
         ? "materials"
-        : ["review", "review-hub", "review-foreign", "review-english"].includes(name)
+        : ["review", "review-hub", "review-foreign", "review-english", "politics-review"].includes(name)
           ? "cards"
           : ["vocab-flash", "english-exams"].includes(name)
             ? "english"
@@ -3091,6 +3094,8 @@ function showView(name, options = {}) {
               ? "works"
               : ["practice", "foreign-practice"].includes(name)
                 ? "exams"
+                : name === "politics-practice"
+                  ? "politics-practice"
                 : name === "profile"
                   ? "profile"
                   : name === "settings"
@@ -3295,6 +3300,9 @@ function updateSidebarContext() {
     "library-cn": "历史作品展 · 中国美术史",
     "library-foreign": "历史作品展 · 外国美术史",
     "review-english": "复习 · 英语词汇",
+    "politics-materials": "学习资料 · 政治考点",
+    "politics-review": "复习小卡片 · 政治考点",
+    "politics-practice": "政治自测",
     "works": "历史作品展 · 中国美术史",
     "foreign-works": "历史作品展 · 外国美术史",
     "practice": "历史真题小仓库 · 中国美术史",

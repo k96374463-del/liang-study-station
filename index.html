@@ -95,10 +95,10 @@
             <span>03</span>
             <strong>英语专区</strong>
           </button>
-          <button class="sidebar-subitem" type="button" data-view="politics" data-nav-target="materials" data-politics-jump="notes">
+          <button class="sidebar-subitem" type="button" data-view="politics-materials">
             <span>04</span>
             <strong>政治考点资料</strong>
-            <b>28</b>
+            <b>99</b>
           </button>
           <button class="sidebar-subitem" type="button" data-view="theory">
             <span>05</span>
@@ -135,7 +135,7 @@
             <strong>英语词汇复习</strong>
             <b id="sidebar-english-review-count">0</b>
           </button>
-          <button class="sidebar-subitem" type="button" data-view="politics" data-nav-target="cards" data-politics-jump="review">
+          <button class="sidebar-subitem" type="button" data-view="politics-review">
             <span>04</span>
             <strong>政治考点复习</strong>
             <b id="sidebar-politics-review-count">0</b>
@@ -205,18 +205,23 @@
           </button>
         </div>
       </section>
+      <button class="sidebar-heading" type="button" data-view="politics-practice" data-nav-section="politics-practice">
+        <span class="sidebar-icon" aria-hidden="true">测</span>
+        <strong><small>07</small> 政治自测</strong>
+        <span class="sidebar-sign" aria-hidden="true"></span>
+      </button>
       <button class="sidebar-heading" type="button" data-view="profile" data-nav-section="profile">
         <span class="sidebar-icon sidebar-icon-image" aria-hidden="true">
           <img src="assets/study-profile.png" alt="">
         </span>
-        <strong><small>07</small> 学习档案</strong>
+        <strong><small>08</small> 学习档案</strong>
         <span class="sidebar-sign" aria-hidden="true"></span>
       </button>
       <button class="sidebar-heading" type="button" data-view="settings" data-nav-section="settings">
         <span class="sidebar-icon sidebar-icon-image" aria-hidden="true">
           <img src="assets/settings-backup.png" alt="">
         </span>
-        <strong><small>08</small> 设置与备份</strong>
+        <strong><small>09</small> 设置与备份</strong>
         <span class="sidebar-sign" aria-hidden="true"></span>
       </button>
     </nav>
@@ -365,12 +370,16 @@
       <span>06</span>
       <strong>英语备考</strong>
     </button>
-    <button type="button" data-view="profile" data-nav-section="profile">
+    <button type="button" data-view="politics-practice" data-nav-section="politics-practice">
       <span>07</span>
+      <strong>政治自测</strong>
+    </button>
+    <button type="button" data-view="profile" data-nav-section="profile">
+      <span>08</span>
       <strong>学习档案</strong>
     </button>
     <button type="button" data-view="settings" data-nav-section="settings">
-      <span>08</span>
+      <span>09</span>
       <strong>设置与备份</strong>
     </button>
   </nav>
@@ -409,7 +418,7 @@
       <span>03</span>
       <strong>英语专区</strong>
     </button>
-    <button type="button" data-view="politics" data-nav-target="materials" data-politics-jump="notes">
+    <button type="button" data-view="politics-materials">
       <span>04</span>
       <strong>政治考点资料</strong>
     </button>
@@ -435,7 +444,7 @@
       <span>03</span>
       <strong>英语词汇复习</strong>
     </button>
-    <button type="button" data-view="politics" data-nav-target="cards" data-politics-jump="review">
+    <button type="button" data-view="politics-review">
       <span>04</span>
       <strong>政治考点复习</strong>
     </button>
@@ -868,6 +877,18 @@
 
     <section class="view" id="view-politics" data-view-panel="politics" aria-labelledby="politics-title" hidden>
       <div class="politics-page" id="politics-content"></div>
+    </section>
+
+    <section class="view" id="view-politics-materials" data-view-panel="politics-materials" aria-labelledby="politics-materials-title" hidden>
+      <div id="politics-materials-content"></div>
+    </section>
+
+    <section class="view" id="view-politics-review" data-view-panel="politics-review" aria-labelledby="politics-review-title" hidden>
+      <div id="politics-review-content"></div>
+    </section>
+
+    <section class="view" id="view-politics-practice" data-view-panel="politics-practice" aria-labelledby="politics-practice-title" hidden>
+      <div id="politics-practice-content"></div>
     </section>
 
     <section class="view" id="view-map" data-view-panel="map" aria-labelledby="map-title" hidden>
